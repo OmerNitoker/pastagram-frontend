@@ -1,8 +1,11 @@
 import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router';
 // import { gPosts } from "../services/post.service";
 
 export function UserPostsSaved({ currentUser, posts }) {
   const [savedPosts, setSavedPosts] = useState([]);
+
+  // const location = useLocation()
   
     useEffect(() => {
 

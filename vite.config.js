@@ -8,10 +8,11 @@ export default defineConfig({
     react(),
     svgr(),
   ],
-  base: "/Pastagram/",
+  // base: "/Pastagram/",
 
   build: {
-    outDir: 'dist'
+    outDir: '../backend/public',
+    emptyOutDir: true
   }
 })
 

@@ -1,9 +1,12 @@
 import { storageService } from './async-storage.service'
+import { httpService } from './http.service'
 // import { httpService } from './http.service'
 import { utilService } from './util.service'
 
 
 const STORAGE_KEY_LOGGEDIN_USER = 'loggedinUser'
+const BASE_URL_USER = 'user/'
+const BASE_URL_AUTH = 'auth/'
 
 export const userService = {
     login,
@@ -21,240 +24,6 @@ export const userService = {
 
 window.userService = userService
 
-
-// const gUsers = [
-//     getDemoUser(),
-
-//     {
-//         _id: "u101",
-//         fullname: "James Smith",
-//         username: "james_smith",
-//         password: "password123",
-//         imgUrl: "https://res.cloudinary.com/dmhaze3tc/image/upload/v1712646609/insta-project/users/James_Smith_fq1zpt.jpg",
-//         following: ["6D8xF", "2H9zJ",],
-//         followers: ["5K1pM", "4C6qN"],
-//         savedPostIds: [],
-//         posts: [],
-//         description: "Lover of adventure, food, and coding."
-//     },
-//     {
-//         _id: "u102",
-//         fullname: "Emily Davis",
-//         username: "emily_davis",
-//         password: "pass123",
-//         imgUrl: "https://res.cloudinary.com/dmhaze3tc/image/upload/v1712646603/insta-project/users/Emily_Davis_aumnv0.jpg",
-//         following: ["3A7bE", "2H9zJ", "4C6qN"],
-//         followers: ["5K1pM", "1F2gH"],
-//         savedPostIds: [],
-//         posts: [],
-//         description: "Dreamer and believer in kindness."
-//     },
-//     {
-//         _id: "u103",
-//         fullname: "Ashley Taylor",
-//         username: "ashley_taylor",
-//         password: "abc123",
-//         imgUrl: "https://res.cloudinary.com/dmhaze3tc/image/upload/v1712646602/insta-project/users/Ashley_Taylor_by00jo.jpg",
-//         following: ["3A7bE", "6D8xF", "4C6qN", "5K1pM"],
-//         followers: ["1F2gH", "7B3rD"],
-//         savedPostIds: [],
-//         posts: [],
-//         description: "Passionate about technology and sports."
-//     },
-//     {
-//         _id: "u104",
-//         fullname: "David Johnson",
-//         username: "david_johnson",
-//         password: "emilypass",
-//         imgUrl: "https://res.cloudinary.com/dmhaze3tc/image/upload/v1712646604/insta-project/users/David_Johnson_vcvhgl.jpg",
-//         following: ["janesmith", "michaelj", "4C6qN"],
-//         followers: ["1F2gH", "7B3rD"],
-//         savedPostIds: [],
-//         posts: [],
-//         description: "Explorer and coffee enthusiast."
-//     },
-//     {
-//         _id: "u105",
-//         fullname: "Michael Williams",
-//         username: "michael_williams",
-//         password: "wilson123",
-//         imgUrl: "https://res.cloudinary.com/dmhaze3tc/image/upload/v1712646606/insta-project/users/Michael_Williams_p5umiy.jpg",
-//         following: ["3A7bE", "janesmith", "4C6qN", "1F2gH"],
-//         followers: ["7B3rD", "5K1pM"],
-//         savedPostIds: [],
-//         posts: [],
-//         description: "Creative thinker with a love for music."
-//     },
-//     {
-//         _id: "u106",
-//         fullname: "Robert Jones",
-//         username: "robert_jones",
-//         password: "sarahpass",
-//         imgUrl: "https://res.cloudinary.com/dmhaze3tc/image/upload/v1712646607/insta-project/users/Robert_Jones_ovrwnr.jpg",
-//         following: ["3A7bE", "janesmith", "emilyb"],
-//         followers: ["7B3rD", "5K1pM"],
-//         savedPostIds: [],
-//         posts: [],
-//         description: "Passionate about photography and nature."
-//     },
-//     {
-//         _id: "u107",
-//         fullname: "Jessica Wilson",
-//         username: "jessica_wilson",
-//         password: "martinez1",
-//         imgUrl: "https://res.cloudinary.com/dmhaze3tc/image/upload/v1712646612/insta-project/users/Jessica_Wilson_ghro83.jpg",
-//         following: ["janesmith", "michaelj", "4C6qN"],
-//         followers: ["7B3rD", "5K1pM"],
-//         savedPostIds: [],
-//         posts: [],
-//         description: "Adventurous soul with a love for food."
-//     },
-//     {
-//         _id: "9H4fG",
-//         fullname: "Jessica Anderson",
-//         username: "jessicaa",
-//         password: "jessicapw",
-//         imgUrl: "https://res.cloudinary.com/dmhaze3tc/image/upload/v1713194414/insta-project/users/Jessica_Anderson_mhrqf5.jpg",
-//         following: ["janesmith", "michaelj", "4C6qN"],
-//         followers: ["7B3rD", "5K1pM"],
-//         savedPostIds: [],
-//         posts: [],
-//         description: "Art lover and aspiring traveler."
-//     },
-//     {
-//         _id: "8E5dF",
-//         fullname: "Christopher Lee",
-//         username: "chrisl",
-//         password: "leechris",
-//         imgUrl: "https://res.cloudinary.com/dmhaze3tc/image/upload/v1713195999/insta-project/users/Christopher_Lee_xi3cyy.jpg",
-//         following: ["janesmith", "michaelj", "4C6qN"],
-//         followers: ["7B3rD", "5K1pM"],
-//         savedPostIds: [],
-//         posts: [],
-//         description: "Tech enthusiast and gaming aficionado."
-//     },
-//     {
-//         _id: "3T2sK",
-//         fullname: "Amanda Perez",
-//         username: "amandap",
-//         password: "perezamanda",
-//         imgUrl: "https://res.cloudinary.com/dmhaze3tc/image/upload/v1713194420/insta-project/users/Amanda_Perez_m7oriu.jpg",
-//         following: ["janesmith", "michaelj", "4C6qN"],
-//         followers: ["7B3rD", "5K1pM"],
-//         savedPostIds: [],
-//         posts: [],
-//         description: "Bookworm and tea lover."
-//     },
-//     {
-//         _id: utilService.makeId(),
-//         fullname: "Kelsey Murphy",
-//         username: "kelsey_murphy",
-//         password: "kelsey123",
-//         imgUrl: "https://res.cloudinary.com/dmhaze3tc/image/upload/v1713196602/insta-project/users/Kelsey_Murphy_dbsjbb.jpg",
-//         following: ["janesmith", "michaelj", "4C6qN"],
-//         followers: ["7B3rD", "5K1pM"],
-//         savedPostIds: [],
-//         posts: [],
-//         description: "Wanderlust-filled soul exploring the world, one adventure at a time 🌍✈️"
-//     },
-//     {
-//         _id: utilService.makeId(),
-//         fullname: "Jeremy Stewart",
-//         username: "jeremy_stewart",
-//         password: "jer123",
-//         imgUrl: "https://res.cloudinary.com/dmhaze3tc/image/upload/v1713197388/insta-project/users/Jeremy_Stewart_pyl1o5.jpg",
-//         following: ["janesmith", "michaelj", "4C6qN"],
-//         followers: ["7B3rD", "5K1pM"],
-//         savedPostIds: [],
-//         posts: [],
-//         description: "Dreamer, believer, and occasional overthinker 💭✨"
-//     },
-//     {
-//         _id: utilService.makeId(),
-//         fullname: "Angela Chang",
-//         username: "angela_chang",
-//         password: "angel123",
-//         imgUrl: "https://res.cloudinary.com/dmhaze3tc/image/upload/v1713197445/insta-project/users/Angela_Chang_f2tlnd.jpg",
-//         following: ["janesmith", "michaelj", "4C6qN"],
-//         followers: ["7B3rD", "5K1pM"],
-//         savedPostIds: [],
-//         posts: [],
-//         description: "Lover of books, coffee, and rainy days ☕📚☔"
-//     },
-//     {
-//         _id: utilService.makeId(),
-//         fullname: "Steven Turner",
-//         username: "steven_turner",
-//         password: "stevee123",
-//         imgUrl: "https://res.cloudinary.com/dmhaze3tc/image/upload/v1713197508/insta-project/users/Steven_Turner_t8x73r.jpg",
-//         following: ["janesmith", "michaelj", "4C6qN"],
-//         followers: ["7B3rD", "5K1pM"],
-//         savedPostIds: [],
-//         posts: [],
-//         description: "Creating my own sunshine on cloudy days"
-//     },
-//     {
-//         _id: utilService.makeId(),
-//         fullname: "Cassandra Adams",
-//         username: "cassy_adams",
-//         password: "cassy123",
-//         imgUrl: "https://res.cloudinary.com/dmhaze3tc/image/upload/v1713197553/insta-project/users/Cassandra_Adams_fhwlzt.jpg",
-//         following: ["janesmith", "michaelj", "4C6qN"],
-//         followers: ["7B3rD", "5K1pM"],
-//         savedPostIds: [],
-//         posts: [],
-//         description: "Just a girl with a passion for fashion and a love for life"
-//     },
-//     {
-//         _id: utilService.makeId(),
-//         fullname: "Anthony Carter",
-//         username: "anthony carter",
-//         password: "anton123",
-//         imgUrl: "https://res.cloudinary.com/dmhaze3tc/image/upload/v1713197616/insta-project/users/Anthony_Carter_cx2ond.jpg",
-//         following: ["janesmith", "michaelj", "4C6qN"],
-//         followers: ["7B3rD", "5K1pM"],
-//         savedPostIds: [],
-//         posts: [],
-//         description: "Adventure seeker | Coffee enthusiast | Dog lover"
-//     },
-//     {
-//         _id: utilService.makeId(),
-//         fullname: "Heather Li",
-//         username: "heather_li",
-//         password: "heather123",
-//         imgUrl: "https://res.cloudinary.com/dmhaze3tc/image/upload/v1713197654/insta-project/users/Heather_Li_czmmgp.jpg",
-//         following: ["janesmith", "michaelj", "4C6qN"],
-//         followers: ["7B3rD", "5K1pM"],
-//         savedPostIds: [],
-//         posts: [],
-//         description: "Forever wandering, forever wondering 🌌🚀"
-//     },
-//     {
-//         _id: utilService.makeId(),
-//         fullname: "Kevin Nelson",
-//         username: "kevin_nelson",
-//         password: "kev123",
-//         imgUrl: "https://res.cloudinary.com/dmhaze3tc/image/upload/v1713197696/insta-project/users/Kevin_Nelson_zpkgp1.jpg",
-//         following: ["janesmith", "michaelj", "4C6qN"],
-//         followers: ["7B3rD", "5K1pM"],
-//         savedPostIds: [],
-//         posts: [],
-//         description: "Making memories around the world, one passport stamp at a time"
-//     },
-//     {
-//         _id: utilService.makeId(),
-//         fullname: "Vanessa Patel",
-//         username: "vanessa_patel",
-//         password: "vanessa123",
-//         imgUrl: "https://res.cloudinary.com/dmhaze3tc/image/upload/v1713197752/insta-project/users/Vanessa_Patel_hpqnwi.jpg",
-//         following: ["janesmith", "michaelj", "4C6qN"],
-//         followers: ["7B3rD", "5K1pM"],
-//         savedPostIds: [],
-//         posts: [],
-//         description: "Slightly obsessed with sunsets and good vibes ✌️✌️"
-//     },
-// ];
-
 const gUsers = [
     {
         _id: "u100",
@@ -269,7 +38,7 @@ const gUsers = [
         description: ""
     },
     {
-        _id: "u101",
+        _id: "667e5d492bdc2b0285bdcf8d",
         fullname: "Mug Life Cafe",
         username: "Mug Life Cafe",
         password: "mug123",
@@ -277,11 +46,11 @@ const gUsers = [
         following: new Array(72).fill({ _id: utilService.makeId() }),
         followers: new Array(9413).fill({ _id: utilService.makeId() }),
         savedPostIds: [],
-        posts: ["s1001","s1002","s1003","s1004","s1005","s1006","s1007","s1008","s1009","s1010","s1011","s1012","s1013","s1014","s1015","s1016","s1017","s1018","s1019","s1020", "s1117", "s1118", "s1119", "s1120", "s1121", "s1122", "s1123", "s1124", "s1125", "s1126", "s1127", "s1128", "s1129", "s1130", "s1131", "s1132", "s1133", "s1134", "s1135", "s1136", "s1233", "s1234", "s1235", "s1236", "s1237", "s1238", "s1239", "s1240", "s1241", "s1242", "s1243", "s1244", "s1245", "s1246", "s1247", "s1248", "s1249", "s1250", "s1251", "s1252", "s1253", "s1254",],
+        posts: ["s1001", "s1002", "s1003", "s1004", "s1005", "s1006", "s1007", "s1008", "s1009", "s1010", "s1011", "s1012", "s1013", "s1014", "s1015", "s1016", "s1017", "s1018", "s1019", "s1020", "s1117", "s1118", "s1119", "s1120", "s1121", "s1122", "s1123", "s1124", "s1125", "s1126", "s1127", "s1128", "s1129", "s1130", "s1131", "s1132", "s1133", "s1134", "s1135", "s1136", "s1233", "s1234", "s1235", "s1236", "s1237", "s1238", "s1239", "s1240", "s1241", "s1242", "s1243", "s1244", "s1245", "s1246", "s1247", "s1248", "s1249", "s1250", "s1251", "s1252", "s1253", "s1254",],
         description: "בית הקפה 'מאג לייף' מציע חוויה קולינרית ייחודית ואיכותית. אנחנו מציעים תפריט מגוון של קפה איכותי, מאפים טריים, ארוחות בוקר וסנדוויצ'ים מפנקים."
     },
     {
-        _id: "u102",
+        _id: "667e5d492bdc2b0285bdcf8e",
         fullname: "Gusto Italiano",
         username: "Gusto Italiano",
         imgUrl: "https://res.cloudinary.com/dmhaze3tc/image/upload/v1713467634/insta-project/pasagram%20posts/Gusto%20italiano/logo-png_roxwv0.png",
@@ -289,9 +58,9 @@ const gUsers = [
         following: new Array(112).fill({ _id: utilService.makeId() }),
         followers: new Array(2403).fill({ _id: utilService.makeId() }),
         savedPostIds: [],
-        posts: ["s1021","s1022","s1023","s1024","s1025","s1026","s1027","s1028","s1029","s1030","s1031","s1032","s1033","s1034","s1035","s1036","s1037","s1038","s1039","s1040","s1041","s1042","s1043"],
+        posts: ["s1021", "s1022", "s1023", "s1024", "s1025", "s1026", "s1027", "s1028", "s1029", "s1030", "s1031", "s1032", "s1033", "s1034", "s1035", "s1036", "s1037", "s1038", "s1039", "s1040", "s1041", "s1042", "s1043"],
         description: "Gusto Italiano invites you on a culinary journey to Italy. Indulge in our authentic dishes bursting with flavor, crafted with passion and tradition. Experience the true taste of Italy at Gusto Italiano."
-    }, 
+    },
     {
         _id: "u103",
         fullname: "Secret Garden Winery",
@@ -582,84 +351,75 @@ const gUsers = [
     },
 ]
 
+// _createUsers()
 
-
-_createUsers()
-
-function getUsers() {
-    const usersFromStorage = storageService.query('user');
-
-    // Vérifiez si des utilisateurs ont été trouvés dans le storageService
-    if (usersFromStorage && usersFromStorage.length > 0) {
-        return usersFromStorage;
-    } else {
-        // Retournez les utilisateurs pré-définis gUsers
-        return gUsers;
+async function getUsers(filterBy) {
+    try {
+        const usersFromDb = await httpService.get(BASE_URL_USER, filterBy)
+        return usersFromDb
+    } catch (err) {
+        console.log('Failed to fetch users')
+        throw err
     }
 }
 
 
 async function getById(userId) {
-    const user = await storageService.get('user', userId)
-    // const user = await httpService.get(`user/${userId}`)
-    return user
+    // const user = await storageService.get('user', userId)
+    return httpService.get(BASE_URL_USER + userId)
 }
 
 function remove(userId) {
-    return storageService.remove('user', userId)
-    // return httpService.delete(`user/${userId}`)
+    // return storageService.remove('user', userId)
+    return httpService.delete(BASE_URL_USER + userId)
 }
 
 async function update(updatedUser) {
-    // ... (le reste du code)
-    
-    await storageService.put('user', updatedUser);
-    saveLocalUser(updatedUser);
-
-    // Mettez à jour sessionStorage également
-    // sessionStorage.setItem(STORAGE_KEY_LOGGEDIN_USER, JSON.stringify(updatedUserInStorage));
-
+    console.log('updatedUser:', updatedUser)
+    // await storageService.put('user', updatedUser);
+    await httpService.put(BASE_URL_USER + updatedUser._id, updatedUser)
+    _setLoggedinUser(updatedUser)
     return updatedUser;
 }
 
 
 
 
-async function login(userCred) {
+async function login({ username, password }) {
     const loggedInUser = getLoggedinUser();
-
-    // Vérifiez si un utilisateur est déjà connecté
     if (loggedInUser) {
         throw new Error('User already logged in');
     }
-
-    const users = await storageService.query('user');
-    const user = users.find(user => user.username === userCred.username && user.password === userCred.password);
-
-    if (user) {
-        saveLocalUser(user);
-        return user;
-    } else {
-        throw new Error('Invalid credentials');
+    try {
+        const user = await httpService.post(BASE_URL_AUTH + 'login', { username, password })
+        console.log('user from frontend service: ', user)
+        if (user) return _setLoggedinUser(user) 
+    } catch (err) {
+        console.log('Unable to login', err)
+        throw err
     }
+    
 }
 
 
-async function signup(userCred) {
-    if (!userCred.imgUrl) userCred.imgUrl = 'https://cdn.pixabay.com/photo/2020/07/01/12/58/icon-5359553_1280.png';
-    const userToSignup = {...userCred}
-    userToSignup.description = ''
-    userToSignup.followers = []
-    userToSignup.following = []
-    userToSignup.posts = []
-    userToSignup.savedPostIds = []
-
-    const newUser = await storageService.post('user', userToSignup);
+async function signup({username, password, fullname}) {
+    const user = {
+        username,
+        password,
+        fullname,
+        imgUrl: 'https://cdn.pixabay.com/photo/2020/07/01/12/58/icon-5359553_1280.png',
+        description: '',
+        followers: 0,
+        following: 0,
+        posts:[],
+        savedpostIds: []
+    }
     
+    const newUser = await httpService.post(BASE_URL_AUTH + 'signup', user)
+
     if (newUser) {
-        console.log('newUser:',newUser)
-        saveLocalUser(newUser);
-        return newUser;
+        console.log('newUser:', newUser)
+        return _setLoggedinUser(newUser)
     } else {
         throw new Error('Signup failed');
     }
@@ -667,9 +427,19 @@ async function signup(userCred) {
 
 
 async function logout() {
+    await httpService.post(BASE_URL_AUTH + 'logout')
     sessionStorage.removeItem(STORAGE_KEY_LOGGEDIN_USER)
-    // return httpService.post('auth/logout')
 }
+
+function getLoggedinUser() {
+    return JSON.parse(sessionStorage.getItem(STORAGE_KEY_LOGGEDIN_USER))
+}
+
+function _setLoggedinUser(user) {
+    sessionStorage.setItem(STORAGE_KEY_LOGGEDIN_USER, JSON.stringify(user))
+    return user
+}
+
 function saveLocalUser(user) {
     user = {
         _id: user._id,
@@ -696,17 +466,18 @@ function updateLocalUserFields(user) {
     return user
 }
 
-function getLoggedinUser() {
-    return JSON.parse(sessionStorage.getItem(STORAGE_KEY_LOGGEDIN_USER))
-}
-
 function _createUsers() {
-    const usersWithIds = gUsers.map(user => ({
-        ...user,
-        _id: utilService.makeId()
-    }));
+    let users = utilService.loadFromStorage('user');
+    if (!users || !users.length) {
+        users = gUsers
+    }
+    // const usersWithIds = gUsers.map(user => ({
+    //     ...user,
+    //     _id: utilService.makeId()
+    // }));
 
-    utilService.saveToStorage('user', usersWithIds);
+    // utilService.saveToStorage('user', usersWithIds);
+    utilService.saveToStorage('user', gUsers);
     // saveUsersToStorage(usersWithIds);
 }
 

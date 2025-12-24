@@ -1,28 +1,29 @@
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { userService } from '../services/user.service'
-// import { ImgUploader } from './ImgUploader'
+import { login, signup } from '../store/actions/user.actions'
+import { useNavigate } from 'react-router-dom'
+import logoImg from '../assets/img/logo-png.png'
+import loginImg from '../assets/img/login-img-frame.png'
 
-export function LoginSignup({ loginUser, signupUser }) {
+export function LoginSignup() {
     const [credentials, setCredentials] = useState({ username: '', password: '', fullname: '' })
     const [isSignup, setIsSignup] = useState(false)
-    const [users, setUsers] = useState([])
 
-
-
+    const navigate = useNavigate()
 
     useEffect(() => {
-        loadUsers()
+        const logoutUser = async () => {
+            const user = userService.getLoggedinUser()
+            if (user) await userService.logout()
+        }
+        logoutUser()
     }, [])
-
-    async function loadUsers() {
-        const users = await userService.getUsers()
-        setUsers(users)
-    }
 
     function clearState() {
         setCredentials({ username: '', password: '', fullname: '', imgUrl: '' })
         setIsSignup(false)
     }
+
 
     function handleChange(ev) {
         const field = ev.target.name
@@ -30,36 +31,57 @@ export function LoginSignup({ loginUser, signupUser }) {
         setCredentials({ ...credentials, [field]: value })
     }
 
-    function onLogin(ev = null) {
+    async function onLogin(ev = null) {
         if (ev) ev.preventDefault()
-        if (!credentials.username) return
-        const existingUser = users.find(user => user.username === credentials.username && user.password === credentials.password);
-        if (!existingUser) return
-        loginUser(existingUser)
-        clearState()
+        if (!credentials.username || !credentials.password) return
+        try {
+            const user = await login(credentials)
+            navigate('/')
+        } catch (err) {
+            console.log('Failed to login', err)
+            throw err
+        }
+        finally {
+            clearState()
+        }
     }
 
-    function onSignup(ev = null) {
+    async function onSignup(ev = null) {
         if (ev) ev.preventDefault()
         if (!credentials.username || !credentials.password || !credentials.fullname) return
-        signupUser(credentials)
-        clearState()
+        try {
+            await signup(credentials)
+            navigate('/')
+        } catch (err) {
+            console.log('Cannot signup', err)
+            throw err
+        }
+        finally {
+            clearState()
+        }
     }
 
     function toggleSignup() {
         setIsSignup(!isSignup)
     }
 
-    function loginGuest() {
-        const guestUsername = 'guy_yaakov'
-        const guestPassword = 'guy123'
-        const guestUser = users.find(user => user.username === guestUsername && user.password === guestPassword)
-        if (!guestUser) {
-            alert('Sorry! there was a problem connecting as guest. Please login or signup')
-            return
+    async function loginGuest(ev) {
+        try {
+            ev.preventDefault()
+            const creds = {
+                username: 'guy_yaakov',
+                password: 'guy123',
+                fullname: 'Guy Yaakov'
+            }
+            await login(creds)
+            navigate('/')
+        } catch (err) {
+            console.log('Failed to login as guest:', err)
+            throw err
         }
-        loginUser(guestUser)
-        clearState()
+        finally {
+            clearState()
+        }
     }
 
     // function onUploaded(imgUrl) {
@@ -68,27 +90,11 @@ export function LoginSignup({ loginUser, signupUser }) {
 
     return (
         <div className="login-page">
-
-            {/* <div className="login-image"> */}
-            <img className="loginsignup-image" src="src/assets/img/login-image.png" alt="mockup" />
-            {/* </div> */}
-
-            {/* <p>
-                <button className="btn-link" onClick={toggleSignup}>{!isSignup ? 'Signup' : 'Login'}</button>
-            </p> */}
+            {/* <img className="loginsignup-image" src="https://res.cloudinary.com/dmhaze3tc/image/upload/v1714984151/insta-project/login-image_veqqrw.png" alt="mockup" /> */}
+            <img className="loginsignup-image" src={loginImg} alt="mockup" />
             {!isSignup && <form className="login-form" onSubmit={onLogin}>
-                {/* <select
-                    name="username"
-                    value={credentials.username}
-                    onChange={handleChange}
-                >
-                    <option value="">Select User</option>
-                    {users.map(user => <option key={user._id} value={user.username}>{user.fullname}</option>)}
-                </select> */}
-
-                {/* <h1 className="logo">Vistagram</h1> */}
                 <div className="pasta-logo">
-                    <img src="../src/assets/img/logo-png.png" alt="" />
+                    <img src={logoImg} alt="" />
                 </div>
                 <input
                     type="mail"
@@ -110,14 +116,17 @@ export function LoginSignup({ loginUser, signupUser }) {
                 <button className='login-submit-btn'>Login!</button>
                 <p>Don't have an account? <span className='login-signup-btn' onClick={toggleSignup}>Sign up</span></p>
                 <p>or</p>
-                <button className="login-demo-btn" onClick={loginGuest}> Continue as guest</button>
+                <button className="login-demo-btn fw600" onClick={loginGuest}> Continue as guest</button>
 
             </form>}
             <div className="signup-section">
                 {isSignup && <form className="signup-form" onSubmit={onSignup}>
-                    <h1 className="logo">Vistagram</h1>
+                    {/* <h1 className="logo">Vistagram</h1> */}
+                    <div className="pasta-logo">
+                        <img src={logoImg} alt="" />
+                    </div>
                     <input
-                        type="text"
+                        type="mail"
                         name="fullname"
                         value={credentials.fullname}
                         placeholder="Fullname"
@@ -125,7 +134,7 @@ export function LoginSignup({ loginUser, signupUser }) {
                         required
                     />
                     <input
-                        type="text"
+                        type="mail"
                         name="username"
                         value={credentials.username}
                         placeholder="Username"
@@ -143,7 +152,7 @@ export function LoginSignup({ loginUser, signupUser }) {
                     {/* <ImgUploader onUploaded={onUploaded} /> */}
                     <button className='signup-submit-btn'>Signup!</button>
                     <p>Have an account? <span className='login-signup-btn' onClick={toggleSignup}>Log in</span></p>
-                    <button className="login-demo-btn" onClick={loginGuest}> Continue as guest</button>
+                    <button className="login-demo-btn fw600" onClick={loginGuest}> Continue as guest</button>
                 </form>}
             </div>
         </div>

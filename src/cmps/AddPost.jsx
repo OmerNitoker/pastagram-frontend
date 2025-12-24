@@ -1,11 +1,8 @@
-import React, { useEffect, useState } from 'react';
-
-import { cloudinaryService } from '../services/cloudinary-service.js';
-import { postService } from '../services/post.service.js';
-import { utilService } from '../services/util.service.js';
-import { addPost } from '../store/actions/post.actions.js';
-import { userService } from '../services/user.service.js';
-import { useNavigate } from 'react-router';
+import React, { useEffect, useState } from 'react'
+import { cloudinaryService } from '../services/cloudinary-service.js'
+import { postService } from '../services/post.service.js'
+import { addPost } from '../store/actions/post.actions.js'
+import { userService } from '../services/user.service.js'
 
 
 export function AddPost({ setIsModalOpen, onCloseModal }) {
@@ -16,7 +13,7 @@ export function AddPost({ setIsModalOpen, onCloseModal }) {
     useEffect(() => {
         const { _id, fullname, username, imgUrl } = loggedinUser;
         setNewPost(prevState => ({ ...prevState, by: { ...prevState.by, _id, fullname, username, imgUrl } }));
-    }, [loggedinUser]);
+    }, [loggedinUser])
 
     function handleChange(ev) {
         const { target } = ev;
@@ -34,12 +31,12 @@ export function AddPost({ setIsModalOpen, onCloseModal }) {
 
     async function handleSubmit(ev) {
         ev.preventDefault()
-        if (!newPost.txt || !newPost.imgUrl) return
+        if (!newPost.imgUrl) return
         const postToAdd = { ...newPost }
         try {
             const addedPost = await addPost(postToAdd)
             const updatedUser = { ...loggedinUser, posts: [...loggedinUser.posts, addedPost._id] }
-            await userService.update(updatedUser);
+            await userService.update(updatedUser)
             setLoggedinUser(updatedUser)
             onCloseModal()
         } catch (err) {
@@ -47,7 +44,6 @@ export function AddPost({ setIsModalOpen, onCloseModal }) {
             throw err
         }
     }
-
 
     return (
         <div className='modal-overlay' onClick={() => setIsModalOpen(false)}>
@@ -82,5 +78,5 @@ export function AddPost({ setIsModalOpen, onCloseModal }) {
                 </div>
             </div>
         </div>
-    );
+    )
 }

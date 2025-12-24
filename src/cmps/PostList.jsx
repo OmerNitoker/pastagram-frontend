@@ -16,5 +16,5 @@ export function PostList({ posts = [], loggedinUser = {}, onRemovePost }) {
                 )}
             </ul>
         </section>
-    );
+    )
 }

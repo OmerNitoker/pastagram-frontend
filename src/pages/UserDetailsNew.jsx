@@ -9,12 +9,35 @@ import { userService } from '../services/user.service';
 import { TableIcon } from '../cmps/icons-cmps/TableIcon';
 import { SaveIcon } from '../cmps/icons-cmps/SaveIcon';
 import { loadPosts } from '../store/actions/post.actions';
+import { useParams } from 'react-router';
 
-export function UserDetails() {
+export function UserDetailsNew() {
     const posts = useSelector((storeState) => storeState.postModule.posts)
-    const currentUser = userService.getLoggedinUser()
-    const [activeComponent, setActiveComponent] = useState(<UserPosts user={currentUser} posts={posts} />);
+    const { userId } = useParams()
+    // const currentUser = userService.getLoggedinUser()
+    const [userToShow, setUserToShow] = useState(null)
+    const [activeComponent, setActiveComponent] = useState(<UserPosts user={userToShow} posts={posts} />);
+    // const [activeComponent, setActiveComponent] = useState(null);
     const [activeTab, setActiveTab] = useState('UserPosts');
+
+    // useEffect(() => {
+    //     fetchData()
+    // }, [])
+
+    // async function fetchData() {
+    //     try {
+    //         if(!posts.length) {
+    //             await loadPosts()
+    //         }
+    //         if(!userToShow) {
+    //             const user = await userService.getById(userId)
+    //             setUserToShow(user)
+    //         }
+    //     } catch (err) {
+    //         console.log('Failed to fetch data')
+    //         throw err
+    //     }
+    // }
 
     useEffect(() => {
         if (!posts.length) {
@@ -27,17 +50,31 @@ export function UserDetails() {
             }
             fetchData()
         }
-    }, [])
+    }, [userId])
 
     useEffect(() => {
-        setActiveComponent(getActiveComponent(activeTab, currentUser, posts));
+        async function fetchUser() {
+            try {
+                const user = await userService.getById(userId)
+                setUserToShow(user)
+                setActiveComponent(getActiveComponent(activeTab, user, posts))
+            }
+            catch (err) {
+                console.log('could not find user:', err)
+            }
+        }
+        fetchUser()
+    }, [activeTab])
+
+    useEffect(() => {
+        setActiveComponent(getActiveComponent(activeTab, userToShow, posts));
     }, [activeTab]);
 
     const handleComponentChange = (componentName) => {
         setActiveTab(componentName);
     };
 
-    const getActiveComponent = (componentName, user = { currentUser }, posts = {posts}) => {
+    const getActiveComponent = (componentName, user = { userToShow }, posts = { posts }) => {
         switch (componentName) {
             case 'UserPosts':
                 return <UserPosts user={user} posts={posts} />;
@@ -50,38 +87,33 @@ export function UserDetails() {
         }
     }
 
-    // if (!currentUser) {
-    //     return (
-    //         <span>loading...</span>
-    //     )
-    // }
-
-    if(!posts.length) return <div></div>
-
+    if (!userToShow || !posts.length) return <div></div>
     return (
         <section className="user-profile">
             <div className="profile-info">
-                <img className="user-profile-avatar user-avatar" src={currentUser.imgUrl} alt={`${currentUser.fullname}'s avatar`} />
+                <img className="user-profile-avatar user-avatar" src={userToShow.imgUrl} alt={`${userToShow.fullname}'s avatar`} />
                 <div className="user-details">
 
                     <div className="user-profile-btns">
-                        <span>{currentUser.username}</span>
+                        <span>{userToShow.username}</span>
                         <span> <button className="follow-btn">Edit profile </button></span>
                         <span><button className="message-btn">View archive</button></span>
                         <span><SettingsIcon /></span>
                     </div>
 
                     <div className="user-stats">
-                        <span className="user-num-posts">{currentUser.posts ? currentUser.posts.length : 'Loading...'} posts</span>
-                        <span className="user-num-followers">{currentUser.followers ? Object.keys(currentUser.followers).length : 'Loading...'} followers</span>
-                        <span className="user-num-following">{currentUser.following ? Object.keys(currentUser.following).length : 'Loading...'} following</span>
+                        <span className="user-num-posts">{userToShow.posts ? userToShow.posts.length : 'Loading...'} posts</span>
+                        {/* <span className="user-num-followers">{userToShow.followers ? Object.keys(userToShow.followers).length : 'Loading...'} followers</span> */}
+                        <span className="user-num-followers">{userToShow.followers} followers</span>
+                        <span className="user-num-following">{userToShow.following} following</span>
+                        {/* <span className="user-num-following">{userToShow.following ? Object.keys(userToShow.following).length : 'Loading...'} following</span> */}
                     </div>
                     <div className="userprofile-description">
-                    <div className="user-profile-fullname">
-                            {currentUser.fullname}
+                        <div className="user-profile-fullname">
+                            {userToShow.fullname}
                         </div>
                         <div className="user-profile-description">
-                            {currentUser.description}
+                            {userToShow.description}
 
                         </div>
                     </div>

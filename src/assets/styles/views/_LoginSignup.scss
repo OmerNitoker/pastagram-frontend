@@ -6,7 +6,7 @@
     justify-content: center;
     // height: 100%;
     // width: 23vw;
-    gap: 50px;
+    // gap: 50px;
     // padding: 20px;
     // margin-top: 100px;
     // margin: 0 auto;
@@ -93,8 +93,8 @@ p {
     height: 100%;
     max-height: 75vh;
     height: 450px;
+    margin-inline-end: 50px;
     border-radius: 2px solid $clr-sep-line;
-    // width: 20vw;
 }
 
 .login-content {
@@ -143,4 +143,10 @@ p {
     border-radius: 1em;
     cursor: pointer;
     border: none;
+}
+
+.login-signup-btn {
+    font-weight: 600;
+    cursor: pointer;
+    color: $clr-btn1;
 }

@@ -1,18 +1,15 @@
 import { useEffect, useState } from "react"
-import { useSelector } from 'react-redux'
 import { Link, useNavigate, useParams } from "react-router-dom"
 import { utilService } from "../services/util.service"
 import { postService } from "../services/post.service"
-// import { setCurrPost } from "../store/actions/post.actions"
 import { userService } from "../services/user.service"
-import { removePost } from "../store/actions/post.actions"
+import { removePost, setCurrPost } from "../store/actions/post.actions"
 import { PostMenu } from "./PostMenu"
 
 export function PostDetails({ lastPath }) {
     const navigate = useNavigate()
 
     const currentUser = userService.getLoggedinUser()
-    const posts = useSelector((storeState) => storeState.postModule.posts)
 
     const [post, setPost] = useState(null)
     const [isPostMenuOpen, setIsPostMenuOpen] = useState(false)
@@ -25,11 +22,9 @@ export function PostDetails({ lastPath }) {
     const [commentTimestamp, setCommentTimestamp] = useState(Date.now())
     const [isEmptyComment, setIsEmptyComment] = useState(true)
     const [isLiked, setIsLiked] = useState(false)
-    const [isTimerSet, setIsTimerSet] = useState(false)
 
     const emojis = ['😀', '😍', '👍', '❤️', '😂', '🎉', '🔥', '😊', '🙌', '😎']
     const { postId } = useParams()
-
 
     useEffect(() => {
         if (likedByIndex !== -1 && likedByIndex !== null) {
@@ -38,42 +33,18 @@ export function PostDetails({ lastPath }) {
     }, [likedByIndex])
 
     useEffect(() => {
-        let currPost
-        currPost = posts.find(post => post._id === postId)
-        if (!currPost) {
-            console.log('could not find post')
+        const fetchPost = async () => {
+            try {
+                const currPost = await postService.getById(postId)
+                if (!currPost) console.log('Failed to find post')
+                else setPost(currPost)
+            } catch (err) {
+                console.log('Had a problem fetching post from DB')
+                throw err
+            }
         }
-        else {
-            setPost(currPost)
-        }
+        fetchPost()
     }, [])
-
-    useEffect(() => {
-        if (post && !isTimerSet) {
-            const timeoutId = setTimeout(() => {
-                setPost(prevPost => ({
-                    ...prevPost,
-                    comments: [...prevPost.comments,
-                    {
-                        _id: utilService.makeId(),
-                        by: {
-                            _id: "u111",
-                            fullname: "Orly Ben-Ari",
-                            username: "orly_ben_ari",
-                            imgUrl: "https://res.cloudinary.com/dmhaze3tc/image/upload/v1713581707/insta-project/pastagram%20users/christina-wocintechchat-com-SJvDxw0azqw-unsplash_mdbgsf.jpg"
-                        },
-                        txt: "איפה בית הקפה נמצא?",
-                        timestamp: Date.now()
-                    }
-                    ]
-                }))
-              
-            }, 5000)
-
-            setIsTimerSet(true)
-            return () => clearTimeout(timeoutId);
-        }
-    }, [post])
 
     async function onRemovePost(postId) {
         try {
@@ -95,18 +66,18 @@ export function PostDetails({ lastPath }) {
                 _id: currentUser._id,
                 fullname: currentUser.fullname,
                 imgUrl: currentUser.imgUrl
-            };
+            }
 
-            updatedPost.likedBy.push(likedUser);
+            updatedPost.likedBy.push(likedUser)
         } else {
-            const index = updatedPost.likedBy.findIndex(user => user._id === currentUser._id); // Recherchez l'utilisateur démo
+            const index = updatedPost.likedBy.findIndex(user => user._id === currentUser._id)
             if (index !== -1) {
-                updatedPost.likedBy.splice(index, 1);
+                updatedPost.likedBy.splice(index, 1)
             }
         }
 
         try {
-            await postService.save(updatedPost);
+            await postService.save(updatedPost)
             setIsLiked(!isLiked)
         }
         catch (err) {
@@ -116,7 +87,7 @@ export function PostDetails({ lastPath }) {
     }
 
     function togglePostMenu() {
-        setIsPostMenuOpen(!isPostMenuOpen);
+        setIsPostMenuOpen(!isPostMenuOpen)
     }
 
     function generateId() {
@@ -124,16 +95,16 @@ export function PostDetails({ lastPath }) {
     }
 
     const handleCommentMouseEnter = (commentId) => {
-        setHoveredComment(commentId);
+        setHoveredComment(commentId)
     }
 
     const handleCommentMouseLeave = () => {
-        setHoveredComment(null);
+        setHoveredComment(null)
     }
 
     const handleDeleteComment = (commentId) => {
-        setCommentToDelete(commentId);
-        setShowDeleteModal(true);
+        setCommentToDelete(commentId)
+        setShowDeleteModal(true)
     }
 
     function toggleDeleteModal() {
@@ -142,35 +113,35 @@ export function PostDetails({ lastPath }) {
 
     const confirmDeleteComment = async () => {
         if (commentToDelete) {
-            const updatedPost = { ...post };
-            const commentIndex = updatedPost.comments.findIndex(comment => comment._id === commentToDelete);
+            const updatedPost = { ...post }
+            const commentIndex = updatedPost.comments.findIndex(comment => comment._id === commentToDelete)
 
             if (commentIndex !== -1) {
-                updatedPost.comments.splice(commentIndex, 1);
-                await postService.save(updatedPost);
-                setShowDeleteModal(false);
+                updatedPost.comments.splice(commentIndex, 1)
+                await postService.save(updatedPost)
+                setShowDeleteModal(false)
             }
         }
     }
 
     const cancelDeleteComment = () => {
-        setShowDeleteModal(false);
-        setCommentToDelete(null);
+        setShowDeleteModal(false)
+        setCommentToDelete(null)
     }
 
     const toggleEmojis = () => {
-        setShowEmojis(!showEmojis);
+        setShowEmojis(!showEmojis)
     }
 
     const addEmojiToComment = (emoji) => {
-        setNewCommentText((prevText) => prevText + emoji);
-        toggleEmojis();
+        setNewCommentText((prevText) => prevText + emoji)
+        toggleEmojis()
     }
 
     const handleCommentChange = (e) => {
         const comment = e.target.value
-        setNewCommentText(comment);
-        setCommentTimestamp(Date.now());
+        setNewCommentText(comment)
+        setCommentTimestamp(Date.now())
         if (comment.length) {
             setIsEmptyComment(false)
         }
@@ -181,7 +152,7 @@ export function PostDetails({ lastPath }) {
 
     const handleCommentSubmit = async () => {
         if (newCommentText.trim() === "") {
-            return;
+            return
         }
 
         const newComment = {
@@ -194,10 +165,10 @@ export function PostDetails({ lastPath }) {
             },
             txt: newCommentText,
             timestamp: Date.now()
-        };
+        }
 
-        post.comments.push(newComment)
-        setNewCommentText("");
+        post.comments.unshift(newComment)
+        setNewCommentText("")
         setIsEmptyComment(true)
 
         await postService.save(post)
@@ -211,7 +182,7 @@ export function PostDetails({ lastPath }) {
 
     const handleKeyPress = (event) => {
         if (event.key === 'Enter') {
-            handleCommentSubmit(event);
+            handleCommentSubmit(event)
         }
     }
 
@@ -221,18 +192,15 @@ export function PostDetails({ lastPath }) {
 
     return (
         <div className="details-container">
-
             <div className="modal-overlay" onClick={handleWraperClicked}>
                 <div className="modal-content details-modal" onClick={(e) => e.stopPropagation()}>
-
                     <img className="modal-post-img" src={post.imgUrl} alt="post-img" />
-
                     <div className="comments-section">
-
                         <section className="post-modal-header flex align-center">
                             <img className="modal-user-avatar" src={post.by.imgUrl} />
                             <Link className="clean-link fw600 fg1">{post.by.username}</Link>
-                            <i onClick={togglePostMenu} className="fa-solid fa-ellipsis "></i>
+                            <i onClick={togglePostMenu} className="fa-solid fa-ellipsis post-menu-btn"></i>
+                            <i className="fa-solid fa-x close-btn" onClick={handleWraperClicked}></i>
                         </section>
                         <ul className="comments-list">
                             <li key={generateId} className="comment-item first-comment">
@@ -261,7 +229,6 @@ export function PostDetails({ lastPath }) {
                                             <span className="comment-text">{comment.txt}</span>
                                         </div>
                                         <div className="comment-actions">
-
                                             <span className="comment-time">{utilService.getTimeAgo(comment.timestamp)}</span>
                                             {hoveredComment === comment._id && (
                                                 <i className="fa-solid fa-ellipsis comment-delete-btn" onClick={() => handleDeleteComment(comment._id)}></i>

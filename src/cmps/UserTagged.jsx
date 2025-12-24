@@ -1,5 +1,5 @@
 
 
 export function UserTagged() {
-    return <div>HI from user tagged</div>
+    return <div>No data available</div>
 }

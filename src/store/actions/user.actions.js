@@ -44,17 +44,25 @@ function updateUserInGUsers(user) {
 }
 
 
-export function login(credentials) {
+export async function login(credentials) {
+    try {
+        const user = await userService.login(credentials)
+        store.dispatch({ type: SET_USER, user })
+    } catch (err) {
+        console.log('user actions => Cannot login')
+        throw err
+    }
+}
 
-    return userService.login(credentials)
-        .then(user => {
-            store.dispatch({ type: SET_USER, user })
-            return user
-        })
-        .catch(err => {
-            console.log('user actions => Cannot login, err')
-            throw err
-        })
+export async function signup(credentials) {
+    try {
+        const user = await userService.signup(credentials)
+        store.dispatch({ type: SET_USER, user })
+        return user
+    } catch (err) {
+        console.log('user actions --> cannot signup', err)
+        throw err
+    }
 }
 
 export function logoutUser() {
@@ -87,17 +95,14 @@ export async function loginDemo() {
         console.log('had an error')
     }
 }
-// const user = userService.getDemoUser()
-// userService.getUsers()
-// .then (users => {
-//     if (users.length) {
-//         login(users[0])
-//         .then(() =>{return})
-//     }
-//     signup(user)
-//     .then(() => {return})
-// })
 
-
-
+export async function updateUser(user) {
+    try {
+        const updatedUser = await userService.update(user)
+        dispatch({ type: SET_USER, user })
+    } catch (err) {
+        console.log('Failed to update users posts')
+        throw err
+    }
+}
 

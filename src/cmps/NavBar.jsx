@@ -1,19 +1,20 @@
-import { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
-import { Link, redirect, useLocation, useNavigate } from 'react-router-dom';
-import { AddPost } from './AddPost';
-import { SearchIcon } from './icons-cmps/SearchIcon';
-import { ExploreIcon } from './icons-cmps/ExploreIcon';
-import { ReelsIcon } from './icons-cmps/ReelsIcon';
-import { MessagesIcon } from './icons-cmps/MessagesIcon';
-import { NotificationsIcon } from './icons-cmps/NotificationsIcon';
-import { CreateIcon } from './icons-cmps/CreateIcon';
-import { MoreIcon } from './icons-cmps/MoreIcon';
-import { HomeIcon } from './icons-cmps/HomeIcon';
-import { InstagramLogo } from './icons-cmps/InstagramLogo';
-import { userService } from '../services/user.service';
-import { PastagramLogo } from './icons-cmps/PatagramLogo';
-import { MoreMenu } from './MoreMenu';
+import { useState, useEffect } from 'react'
+import { Link, redirect, useLocation, useNavigate } from 'react-router-dom'
+import { AddPost } from './AddPost'
+import { SearchIcon } from './icons-cmps/SearchIcon'
+import { ExploreIcon } from './icons-cmps/ExploreIcon'
+import { ReelsIcon } from './icons-cmps/ReelsIcon'
+import { MessagesIcon } from './icons-cmps/MessagesIcon'
+import { NotificationsIcon } from './icons-cmps/NotificationsIcon'
+import { CreateIcon } from './icons-cmps/CreateIcon'
+import { MoreIcon } from './icons-cmps/MoreIcon'
+import { HomeIcon } from './icons-cmps/HomeIcon'
+import { InstagramLogo } from './icons-cmps/InstagramLogo'
+import { userService } from '../services/user.service'
+import { PastagramLogo } from './icons-cmps/PatagramLogo'
+import { MoreMenu } from './MoreMenu'
+import logoImg from '../assets/img/logo-png.png'
+
 
 
 export function NavBar() {
@@ -27,11 +28,6 @@ export function NavBar() {
     useEffect(() => {
         if (!loggedinUser) navigate('/login')
     },[])
-
-    // useEffect(() => {
-    //     const navBar = document.querySelector(".nav-bar");
-    //     navBar.style.opacity = location.pathname.includes('/login') ? '0' : '1';
-    // }, [location.pathname]);
 
     useEffect(() => {
        if (location.pathname.includes('/login')) setIsLoginPath(true)
@@ -58,10 +54,7 @@ export function NavBar() {
         userService.logout()
         navigate('/login')
     }
-    // ... (le reste de votre code)
-
-
-
+   
     return (
 
         <section className= {isLoginPath ? 'nav-bar hidden' : 'nav-bar'}>
@@ -69,8 +62,8 @@ export function NavBar() {
             <div className="insta-icon"> 
                 <InstagramLogo margin="1.5em" marginTop="40px" />
             </div>
-            <div className="pasta-logo">
-                <img src="../src/assets/img/logo-png.png" alt=""/>
+            <div className="pasta-logo nav-logo">
+                <img src= {logoImg} alt=""/>
             </div>
 
 
@@ -79,7 +72,6 @@ export function NavBar() {
                     <Link to="/" className="nav-link" style={{ fontWeight: isLinkActive('/') ? 600 : 'normal' }}>
                         <HomeIcon marginRight="1em" active={isLinkActive('/')} />
                         <span className='nav-name'>Home</span>
-
                     </Link>
                 </li>
                 <li className="nav-item search">
@@ -90,30 +82,30 @@ export function NavBar() {
                     </Link>
                 </li>
                 <li className="nav-item explore">
-                    <Link to="/explore" className="nav-link" style={{ fontWeight: isLinkActive('/explore') ? 600 : 'normal' }}>
+                    <Link /*to="/explore"*/ className="nav-link" style={{ fontWeight: isLinkActive('/explore') ? 600 : 'normal' }}>
                         <ExploreIcon marginRight="1em" active={isLinkActive('/explore')} />
-                        <span className='nav-name'>Explore</span>
+                        <span className='nav-name'>Explore - soon</span>
 
                     </Link>
                 </li>
                 <li className="nav-item reels">
-                    <Link to="/reels" className="nav-link" style={{ fontWeight: isLinkActive('/reels') ? 600 : 'normal' }}>
+                    <Link /*to="/reels"*/ className="nav-link" style={{ fontWeight: isLinkActive('/reels') ? 600 : 'normal' }}>
                         <ReelsIcon marginRight="1em" active={isLinkActive('/reels')} />
-                        <span className='nav-name'>Reels</span>
+                        <span className='nav-name'>Reels - soon</span>
 
                     </Link>
                 </li>
                 <li className="nav-item chat">
-                    <Link to="/chat" className="nav-link" style={{ fontWeight: isLinkActive('/chat') ? 600 : 'normal' }}>
+                    <Link /*to="/chat"*/ className="nav-link" style={{ fontWeight: isLinkActive('/chat') ? 600 : 'normal' }}>
                         <MessagesIcon marginRight="1em" active={isLinkActive('/chat')} />
-                        <span className='nav-name'>Messages</span>
+                        <span className='nav-name'>Messages - soon</span>
 
                     </Link>
                 </li>
                 <li className="nav-item notifications">
-                    <Link to="/notifications" className="nav-link" style={{ fontWeight: isLinkActive('/notifications') ? 600 : 'normal' }}>
+                    <Link /*to="/notifications"*/ className="nav-link" style={{ fontWeight: isLinkActive('/notifications') ? 600 : 'normal' }}>
                         <NotificationsIcon marginRight="1em" active={isLinkActive('/notifications')} />
-                        <span className='nav-name'>Notifications</span>
+                        <span className='nav-name'>Notifications - soon</span>
                     </Link>
                 </li>
                 <li onClick={onAddPost} className="nav-item create">
@@ -124,8 +116,7 @@ export function NavBar() {
                     </Link>
                 </li>
                 <li className="nav-item userDetails">
-                    <Link to="/user" className="nav-link" style={{ fontWeight: isLinkActive('/user') ? 600 : 'normal' }}>
-                         {/* <i className="fa-regular fa-circle"></i>  */}
+                    <Link to={loggedinUser ? `/user/${loggedinUser._id}` : '/user'} className="nav-link" style={{ fontWeight: isLinkActive('/user') ? 600 : 'normal' }}>
                        {loggedinUser ? <img src={loggedinUser.imgUrl} className="user-avatar nav-img" /> : 
                         <img src= 'https://cdn.pixabay.com/photo/2020/07/01/12/58/icon-5359553_1280.png' className="user-avatar nav-img" />}
                         <span className='nav-name'>Profile</span>
@@ -141,5 +132,5 @@ export function NavBar() {
             {isModalOpen && <AddPost setIsModalOpen={setIsModalOpen} onCloseModal={onCloseModal} />}
             {isMoreOpen && <MoreMenu toggleMoreMenu={toggleMoreMenu} onLogoutClicked={onLogoutClicked} />}
         </section>
-    );
+    )
 }

@@ -1,5 +1,3 @@
-
-
 import { Link, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { postService } from "../services/post.service";
@@ -8,9 +6,7 @@ import { PostMenu } from "./PostMenu";
 import { utilService } from "../services/util.service";
 
 export function PostPreview({ post, currentUser, onRemovePost, onUpdatePost }) {
-    // const [likesCount, setLikesCount] = useState(post.likedBy.length);
     const likedByIdx = post.likedBy.findIndex(user => user._id === currentUser._id);
-    // const [isModalOpen, setIsModalOpen] = useState(false)
     const [isPostMenuOpen, setIsPostMenuOpen] = useState(false)
     const [isLikePost, setIsLikePost] = useState(false)
     const [isSaved, setIsSaved] = useState(currentUser.savedPostIds ? currentUser.savedPostIds.includes(post._id) : false);
@@ -27,15 +23,16 @@ export function PostPreview({ post, currentUser, onRemovePost, onUpdatePost }) {
         else {
             setIsLikePost(false)
         }
-    }, [likedByIdx]);
+    }, [likedByIdx])
 
     function togglePostMenu() {
-        setIsPostMenuOpen(!isPostMenuOpen);
+        console.log('post by user:', post.by._id)
+        console.log('userId:', currentUser._id)
+        if (post.by._id === currentUser._id) setIsPostMenuOpen(!isPostMenuOpen)
+        else if (isPostMenuOpen) setIsPostMenuOpen(!isPostMenuOpen)
     }
 
     const handleLikeClick = async () => {
-
-
         const updatedPost = { ...post };
 
         if (!isLikePost) {
@@ -43,7 +40,7 @@ export function PostPreview({ post, currentUser, onRemovePost, onUpdatePost }) {
                 _id: currentUser._id,
                 fullname: currentUser.fullname,
                 imgUrl: currentUser.imgUrl
-            };
+            }
 
             updatedPost.likedBy.push(likedUser);
         } else {
@@ -54,7 +51,7 @@ export function PostPreview({ post, currentUser, onRemovePost, onUpdatePost }) {
         }
 
         try {
-            await postService.save(updatedPost);
+            await postService.save(updatedPost)
         }
         catch (err) {
             console.log('could not save updated post')
@@ -79,7 +76,7 @@ export function PostPreview({ post, currentUser, onRemovePost, onUpdatePost }) {
 
     const handleCommentSubmit = async () => {
         if (newCommentText.trim() === "") {
-            return;
+            return
         }
 
         const newComment = {
@@ -101,16 +98,12 @@ export function PostPreview({ post, currentUser, onRemovePost, onUpdatePost }) {
         await postService.save(post)
     }
 
-    // postService.save(updatedPost);
-    // setIsLiked(!isLiked);
-
     const handleSaveClick = () => {
         const updatedUser = { ...currentUser }
-        console.log('user:', updatedUser)
-        const postIndex = updatedUser.savedPostIds.length ? updatedUser.savedPostIds.indexOf(post._id) : -1;
+        const postIndex = updatedUser.savedPostIds.length ? updatedUser.savedPostIds.indexOf(post._id) : -1
         if (postIndex === -1) {
-            updatedUser.savedPostIds.push(post._id);
-            setIsSaved(true); // Met à jour l'état pour indiquer que le post est sauvegardé
+            updatedUser.savedPostIds.push(post._id)
+            setIsSaved(true)
             userService.update(updatedUser)
                 .then(updatedUser => {
                     // alert('Post saved successfully!');
@@ -132,19 +125,16 @@ export function PostPreview({ post, currentUser, onRemovePost, onUpdatePost }) {
                 });
         }
     };
-    
+
 
     const timeAgo = utilService.getTimeAgo(post.timestamp);
-
-
+    
     return (
         <article className="post-preview flex column fs14">
 
-
-
             <section className="post-header flex align-center">
                 <img className="user-avatar" src={post.by.imgUrl} />
-                <Link className="clean-link fw600">{post.by.username}</Link>
+                <Link to={`/user/${post.by._id}`} className="clean-link fw600">{post.by.username}</Link>
                 <div className="post-time">• {timeAgo}</div>
                 <i onClick={togglePostMenu} className="fa-solid fa-ellipsis "></i>
             </section>
@@ -162,7 +152,7 @@ export function PostPreview({ post, currentUser, onRemovePost, onUpdatePost }) {
                         <i className="fa-regular fa-comment"></i>
                     </Link>
                     <i className="fa-regular fa-paper-plane share-post-btn"></i>
-                    <i className={`fa-${isSaved ? 'solid' : 'regular'} fa-bookmark`} onClick={handleSaveClick}></i> {/* Utilisation de l'état isSaved pour conditionner l'affichage de l'icône "Save" ou "Saved" */}
+                    <i className={`fa-${isSaved ? 'solid' : 'regular'} fa-bookmark`} onClick={handleSaveClick}></i>
                 </div>
 
                 {post.likedBy.length ? <span className="num-of-likes">{post.likedBy.length} {post.likedBy.length === 1 ? 'Like' : 'Likes'}</span> : <span></span>}
@@ -195,7 +185,7 @@ export function PostPreview({ post, currentUser, onRemovePost, onUpdatePost }) {
                     handleLikeClick={handleLikeClick}
                     isLiked={isLiked}
                 />} */}
-            {(isPostMenuOpen && post.by._id === currentUser._id) &&
+            {isPostMenuOpen && 
                 <PostMenu
                     post={post}
                     setIsPostMenuOpen={setIsPostMenuOpen}
